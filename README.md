@@ -1,2 +1,3 @@
-# cs3110-omp
-OCaml Music Player
+# cs3110-OCAML
+## OCAML: OCaml Comprehensive Audio & Music Library
+(Note: A [recursive acronym!](https://en.wikipedia.org/wiki/Recursive_acronym))
