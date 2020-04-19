@@ -1,7 +1,7 @@
 #require "oUnit";;
 #require "yojson";;
 #require "ANSITerminal";;
+#require "liquidsoap";;
 #directory "_build";;
-#load "adventure.cmo";;
-#load "command.cmo";;
-#load "state.cmo";;
+#load "main.cmo";;
+#load "library.cmo";;
