@@ -1,0 +1,153 @@
+{
+  "type": "object",
+  "title": "The Library Schema",
+  "description": "The schema for an OCAML library JSON object.",
+  "default": {},
+  "additionalProperties": true,
+  "required": [
+    "name",
+    "artists"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "The Name Schema",
+      "description": "The library's name. Will reflect filename.",
+      "default": "",
+      "examples": [
+        "jeremy_library"
+      ]
+    },
+    "artists": {
+      "type": "array",
+      "title": "The Artist Schema",
+      "description": "An array of Artist objects.",
+      "default": [],
+      "examples": [
+        [
+          {
+            "albums": [
+              {
+                "title": "Man It Feels Like Space Again",
+                "tracks": [
+                  "outside_is_the_right_side.mp3",
+                  "sitting_up_on_our_crane.mp3"
+                ]
+              }
+            ],
+            "name": "Pond"
+          }
+        ]
+      ],
+      "additionalItems": true,
+      "items": {
+        "type": "object",
+        "title": "The Artist Schema",
+        "description": "An explanation about the purpose of this instance.",
+        "default": {},
+        "examples": [
+          {
+            "albums": [
+              {
+                "title": "Man It Feels Like Space Again",
+                "tracks": [
+                  "outside_is_the_right_side.mp3",
+                  ""
+                ]
+              }
+            ],
+            "name": "Pond"
+          }
+        ],
+        "additionalProperties": true,
+        "required": [
+          "name",
+          "albums"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "The Artist Name Schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+              "Pond"
+            ]
+          },
+          "albums": {
+            "type": "array",
+            "title": "The Album Array Schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": [],
+            "examples": [
+              [
+                {
+                  "title": "Man It Feels Like Space Again",
+                  "tracks": [
+                    "outside_is_the_right_side.mp3",
+                    ""
+                  ]
+                }
+              ]
+            ],
+            "additionalItems": true,
+            "items": {
+              "type": "object",
+              "title": "The Album Schema",
+              "description": "An album object.",
+              "default": {},
+              "examples": [
+                {
+                  "title": "Man It Feels Like Space Again",
+                  "tracks": [
+                    "outside_is_the_right_side.mp3",
+                    ""
+                  ]
+                }
+              ],
+              "additionalProperties": true,
+              "required": [
+                "title",
+                "tracks"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "title": "The Album Title Schema",
+                  "description": "An explanation about the purpose of this instance.",
+                  "default": "",
+                  "examples": [
+                    "Man It Feels Like Space Again"
+                  ]
+                },
+                "tracks": {
+                  "type": "array",
+                  "title": "The Tracks Schema",
+                  "description": "An explanation about the purpose of this instance.",
+                  "default": [],
+                  "examples": [
+                    [
+                      "outside_is_the_right_side.mp3",
+                      "sitting_up_on_our_crane.mp3"
+                    ]
+                  ],
+                  "additionalItems": true,
+                  "items": {
+                    "type": "string",
+                    "title": "The Track Name Schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                      "outside_is_the_right_side.mp3",
+                      "sitting_up_on_our_crane.mp3"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
