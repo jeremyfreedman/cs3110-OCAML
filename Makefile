@@ -1,4 +1,4 @@
-MODULES=main library
+MODULES=main test library
 OBJECTS=$(MODULES:=.cmo)
 MLS=$(MODULES:=.ml)
 MLIS=$(MODULES:=.mli)
