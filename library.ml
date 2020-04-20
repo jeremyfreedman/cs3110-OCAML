@@ -16,7 +16,7 @@ type artist = {
 }
 
 type t = {
-  name : library_name;
+  lib_name : library_name;
   artists : artist list;
 }
 
@@ -39,12 +39,12 @@ let load_artist json = {
 (** [load_library json] create [Library.t] objects based on the contents of
     [json]. *)
 let load_library json = {
-  name = json |> member "name" |> to_string;
+  lib_name = json |> member "lib_name" |> to_string;
   artists = json |> member "artists" |> to_list |> List.map load_artist;
 }
 
 let list_artists t = t.artists
 
-let list_albums t = List.flatten (List.map (fun x -> x.albums) (list_artists t))
+let list_albums t = list_artists t |> List.map (fun x -> x.albums) |> List.flatten
 
-let list_tracks t = List.flatten (List.map (fun x -> x.tracks) (list_albums t))
+let list_tracks t = list_albums t |> List.map (fun x -> x.tracks) |> List.flatten

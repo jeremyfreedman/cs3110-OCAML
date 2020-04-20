@@ -33,7 +33,7 @@ type artist = {
 
 (** The type of a library. *)
 type t = {
-  name : library_name;
+  lib_name : library_name;
   artists : artist list;
 }
 
