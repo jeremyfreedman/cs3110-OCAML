@@ -1,0 +1,35 @@
+{
+  "lib_name": "testlib",
+  "artists": [
+    {
+      "name": "Pond",
+      "albums": [
+        {
+          "title": "Man It Feels Like Space Again",
+          "tracks": [
+            "outside_is_the_right_side.mp3",
+            "waiting_around_for_grace.mp3"
+          ]
+        },
+        {
+          "title": "The Weather",
+          "tracks": [
+            "30000_megatons.mp3",
+            "the_weather.mp3"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Tekashi 6ix9ine",
+      "albums": [
+        {
+          "title": "DUMMY BOI",
+          "tracks": [
+            "stoopid.mp3"
+          ]
+        }
+      ]
+    }
+  ]
+}
