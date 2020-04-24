@@ -44,7 +44,7 @@ exception UnknownAlbum of album_title
 (** Raised when an unknown artist is requested. *)
 exception UnknownArtist of album_title
 
-(** [load_library j] is the library that JSON file [j] represents.
+(** [load_library j] is the library that JSON file [j] represents.  
     Requires: [j] is a valid JSON library representation. *)
 val load_library : Yojson.Basic.t -> t 
 
@@ -56,3 +56,30 @@ val list_albums : t -> album list
 
 (** [list_tracks t] is a list of all track titles in library [t]. *)
 val list_tracks : t -> track_title list 
+
+(** [get_artist artist t] returns the artist object associated with name
+    [artist] in library [t].  
+    Raises: [UnknownArtist] if artist is not present in library. *)
+val get_artist : artist_name -> t -> artist 
+
+(** [get_album artist album t] returns the album object associated with name 
+    [album] by [artist] in library [t].  
+    Raises: [UnknownArtist] if artist is not present in library; 
+    [UnknownAlbum] if album is not present in library.*)
+val get_album : artist_name -> album_title -> t -> album 
+
+(** [add_artist t artist] creates new library object that is identical to [t] but
+    includes new artist with name [artist]. *)
+val add_artist : artist_name -> t -> t
+
+(** [add_album t artist album] creates new library object that is identical to
+    [t] but includes new album with title [album] released by [artist_name].  
+    Raises: [UnknownArtist] if artist is not present in library. *)
+val add_album : artist_name -> album_title -> t -> t
+
+(** [add_track t artist album track] creates new library object that is
+    identical to [t] but includes new track with title [track] in [album]
+    released by [artist_name].  
+    Raises: [UnknownArtist] if artist is not present in library; 
+    [UnknownAlbum] if album is not present in library. *)
+val add_track : artist_name -> album_title -> track_title -> t -> t
