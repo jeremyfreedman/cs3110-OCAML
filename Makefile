@@ -1,4 +1,4 @@
-MODULES=main library state
+MODULES=main library state UI
 OBJECTS=$(MODULES:=.cmo)
 MLS=$(MODULES:=.ml)
 MLIS=$(MODULES:=.mli)
