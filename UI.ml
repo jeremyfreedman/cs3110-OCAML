@@ -4,24 +4,28 @@ open State
 let load_library filename =
   Yojson.Basic.from_file filename |> Library.load_library
 
+let load_dir dir =  Mklibrary.make_library dir
+
 let print_artists state = 
   if (state.library.lib_name = "") then
     (ANSITerminal.(print_string [white;on_red] "No library loaded");print_newline ();) else
-    List.hd (state.library |> list_artists |> List.map (fun x -> x.name) |> 
+    List.hd (state.library |> list_artists |> List.sort compare |>
+             List.map (fun x -> x.name) |> 
              List.map (fun s -> ANSITerminal.(print_string [blue]
                                                 ("- " ^ s ^ "\n"))))
 
 let print_albums state = 
   if (state.library.lib_name = "") then
     (ANSITerminal.(print_string [white;on_red] "No library loaded");print_newline ();) else
-    List.hd (state.library |> list_albums |> List.map (fun x -> x.title) |>
+    List.hd (state.library |> list_albums |> List.sort compare |> 
+             List.map (fun x -> x.title) |>
              List.map (fun s -> ANSITerminal.(print_string [blue]
                                                 ("- " ^ s ^ "\n"))))
 
 let print_tracks state = 
   if (state.library.lib_name = "") then
     (ANSITerminal.(print_string [white;on_red] "No library loaded");print_newline ();) else
-    List.hd (state.library |>list_tracks |> List.map
+    List.hd (state.library |> list_tracks |> List.sort compare |> List.map
                (fun s -> ANSITerminal.(print_string [blue] ("- " ^ s ^ "\n"))))
 
 let print_libinfo state = 
