@@ -24,6 +24,14 @@ let print_tracks state =
     List.hd (state.library |>list_tracks |> List.map
                (fun s -> ANSITerminal.(print_string [blue] ("- " ^ s ^ "\n"))))
 
+let print_libinfo state = 
+  let artists = state.library |> list_artists |> List.length |> string_of_int in 
+  let albums = state.library |> list_albums |> List.length |> string_of_int in 
+  let tracks = state.library |> list_tracks |> List.length |> string_of_int in 
+  if (artists = "0") then
+    ANSITerminal.(print_string [white;on_red] "No library loaded") else
+    ANSITerminal.(print_string [blue] (artists ^ " artists\n" ^ albums ^ " albums\n" ^ tracks ^ " tracks" ));print_newline ()
+
 let list state input = 
   if (List.length input = 1) then
     (ANSITerminal.(print_string [white;on_red] "Usage: list <artists|albums|tracks|>");print_newline ();)
@@ -42,4 +50,5 @@ let print_help () =
                 print_endline "\tlibinfo\t\t\t\tGives stats about the currently open library.";
                 print_endline "\tlist <artists|albums|tracks>\tLists the provided field.";
                 print_endline "\tplay \"<trackname>\"\t\tPlays track.";
+                print_endline "\trestart\t\t\t\tRestarts OCAML (unloads library).";
                 print_endline "\tquit\t\t\t\tQuit OCAML.")
