@@ -27,6 +27,7 @@ let rec main state () =
     | exception _ -> ANSITerminal.(print_string [white;on_red] "Something went wrong!")
     | "help" -> UI.print_help ()
     | "load" -> if (check_file input) then set_library (UI.load_library (List.nth input 1)) state
+    | "loaddir" -> if (check_file input) then set_library (UI.load_dir (List.nth input 1)) state
     | "mklibrary" -> ANSITerminal.(print_string [white;on_red] "Unimplemented");print_newline ()
     | "libinfo" -> UI.print_libinfo state
     | "list" -> UI.print_list state input
