@@ -35,7 +35,7 @@ type artist = {
 type t = {
   lib_name : library_name;
   artists : artist list;
-}
+} 
 
 (** Raised when an unknown track is requested. *)
 exception UnknownTrack of track_title
