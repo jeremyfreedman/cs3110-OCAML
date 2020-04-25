@@ -15,7 +15,7 @@ val set_library : Library.t -> t -> unit
 
 (** [set_start start state] Sets the start field of [state] to 
     [start]. *)
-val set_library : bool -> t -> unit
+val set_start : bool -> t -> unit
 
 (** [set_artist artist state] Sets the current_artist field of [state] to 
     [artist]. *)
