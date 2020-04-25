@@ -29,7 +29,7 @@ let rec main state () =
     | "load" -> if (check_file input) then set_library (UI.load_library (List.nth input 1)) state
     | "mklibrary" -> ANSITerminal.(print_string [white;on_red] "Unimplemented");print_newline ()
     | "libinfo" -> UI.print_libinfo state
-    | "list" -> UI.list state input
+    | "list" -> UI.print_list state input
     | "play" -> ANSITerminal.(print_string [white;on_red] "Unimplemented");print_newline ()
     | "restart" -> UI.restart state
     | "quit" -> ANSITerminal.(print_string [white;on_red] "Goodbye!");print_newline ();exit 0

@@ -32,7 +32,7 @@ let print_libinfo state =
     ANSITerminal.(print_string [white;on_red] "No library loaded") else
     ANSITerminal.(print_string [blue] (artists ^ " artists\n" ^ albums ^ " albums\n" ^ tracks ^ " tracks" ));print_newline ()
 
-let list state input = 
+let print_list state input = 
   if (List.length input = 1) then
     (ANSITerminal.(print_string [white;on_red] "Usage: list <artists|albums|tracks|>");print_newline ();)
   else if (List.nth input 1 = "artists") then print_artists state 
