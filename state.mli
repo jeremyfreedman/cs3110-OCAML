@@ -7,7 +7,14 @@
 *)
 
 (** The type of a state. *)
-type t
+type t = {
+  mutable library : Library.t;
+  mutable start : bool;
+  mutable current_artist : Library.artist_name;
+  mutable current_album : Library.album_title;
+  mutable current_track : Library.track_title;
+  mutable queue : Library.track_title list
+}
 
 (** [set_library library state] Sets the library field of [state] to 
     [library]. *)
