@@ -23,12 +23,15 @@ let rec main state () =
   ANSITerminal.(print_string [red;on_white;Bold] " > ";print_string [] " ");
   State.set_start false state;
   let input = chunks (read_line ()) in
-  begin match (List.hd input) with
+  begin match String.lowercase_ascii (List.hd input) with
     | exception _ -> ANSITerminal.(print_string [white;on_red] "Something went wrong!")
-    | "load" -> if (check_file input) then set_library (UI.load_library (List.nth input 1)) state; main state ()
-    | "list" -> UI.list state input; main state ()
     | "help" -> UI.print_help ()
-    | "restart" -> UI.restart state; main state ()
+    | "load" -> if (check_file input) then set_library (UI.load_library (List.nth input 1)) state
+    | "mklibrary" -> ANSITerminal.(print_string [white;on_red] "Unimplemented");print_newline ()
+    | "libinfo" -> UI.print_libinfo state
+    | "list" -> UI.list state input
+    | "play" -> ANSITerminal.(print_string [white;on_red] "Unimplemented");print_newline ()
+    | "restart" -> UI.restart state
     | "quit" -> ANSITerminal.(print_string [white;on_red] "Goodbye!");print_newline ();exit 0
     | other -> ANSITerminal.(print_string [white;on_red] ("Unknown command " ^ other));print_newline ()
   end;
