@@ -22,10 +22,10 @@ let read_albums dir artist = read_dir (dir ^ "/" ^ artist)
 
 let read_tracks dir artist album = read_dir (dir ^ "/" ^ artist ^ "/" ^ album)
 
-let rec make_artist dir artist albums acc = 
+let rec make_albums dir artist albums acc = 
   match albums with 
   | [] -> acc
-  |  h::t -> make_artist dir artist t
+  |  h::t -> make_albums dir artist t
                ({title = h; tracks = (read_tracks dir artist h)}::acc)
 
 
@@ -33,6 +33,6 @@ let make_library dir =
   {
     lib_name = dir;
     artists = List.fold_left (fun acc x ->
-        {name = x;albums = (make_artist dir x (read_albums dir x) [])}::acc)
+        {name = x;albums = (make_albums dir x (read_albums dir x) [])}::acc)
         [] (read_artists dir)
   }

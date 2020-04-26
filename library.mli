@@ -1,7 +1,7 @@
 (**
    Representation of a music library.
 
-   This module represents an OCAML-produced, JSON-formatted music library. See
+   This module represents an OCAML-produced, JSON-formattable music library. See
    [schema.json] for details. 
 *)
 

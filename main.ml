@@ -31,6 +31,7 @@ let rec main state () =
     | "mklibrary" -> ANSITerminal.(print_string [white;on_red] "Unimplemented");print_newline ()
     | "libinfo" -> UI.print_libinfo state
     | "list" -> UI.print_list state input
+    | "view" -> UI.print_view state input
     | "play" -> ANSITerminal.(print_string [white;on_red] "Unimplemented");print_newline ()
     | "restart" -> UI.restart state
     | "quit" -> ANSITerminal.(print_string [white;on_red] "Goodbye!");print_newline ();exit 0

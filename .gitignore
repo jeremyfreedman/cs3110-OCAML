@@ -21,3 +21,4 @@ _build
 .DS_Store
 
 test_library/
+ocaml-taglib/
