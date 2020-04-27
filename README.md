@@ -8,6 +8,9 @@
 - View details about individual artist or album
 ## Instructions
 - ### Getting started
+  - Install the necessary dependencies using OPAM:
+    - `Yojson==1.7.0`
+    - `ANSITerminal==0.8.2`
   - Run OCAML with `make`.
   - Run `help` to see available instructions.
   - Need further assistance? `make docs` will generate interface documentation in HTML format.
