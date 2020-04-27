@@ -16,7 +16,7 @@ val print_albums : State.t -> unit
 
 val print_tracks : State.t -> unit
 
-val print_all : Library.artist list -> unit
+val print_all : State.t -> Library.artist list -> unit
 
 val print_list : State.t -> string list -> unit
 
