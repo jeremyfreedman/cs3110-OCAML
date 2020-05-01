@@ -80,6 +80,6 @@ let print_help () =
                 print_endline "\tlibinfo\t\t\t\t\tGives stats about the currently open library.";
                 print_endline "\tlist <all|artists|albums|tracks>\tLists the provided field.";
                 print_endline "\tview <artist> <name>\t\t\tView details about the provided category and name.";
-                print_endline "\tplay <trackname>\t\t\tPlays track.";
+                print_endline "\tplay <artist> [album] [track]\t\tPlays desired media.";
                 print_endline "\trestart\t\t\t\t\tRestarts OCAML (unloads library).";
                 print_endline "\tquit\t\t\t\t\tQuit OCAML.")

@@ -5,9 +5,10 @@ open UI
 
 let chunks s = String.split_on_char ' ' s
 
-let check_file input =
+let check_file file input =
   if (List.length input < 2) then
-    (ANSITerminal.(print_string [white;on_red] "No filename provided");print_newline (); false) else 
+    if (file) then (ANSITerminal.(print_string [white;on_red] "No filename provided");print_newline (); false) else 
+      (ANSITerminal.(print_string [white;on_red] "No directory provided");print_newline (); false) else
     (ANSITerminal.(print_string [white;on_blue] ("Loading library " ^ List.nth input 1));print_newline (); true)
 
 let init_state = {library = {lib_name = ""; artists = []}; start = true; 
@@ -26,8 +27,8 @@ let rec main state () =
   begin match String.lowercase_ascii (List.hd input) with
     | exception _ -> ANSITerminal.(print_string [white;on_red] "Something went wrong!")
     | "help" -> UI.print_help ()
-    | "load" -> if (check_file input) then set_library (UI.load_library (List.nth input 1)) state
-    | "loaddir" -> if (check_file input) then set_library (UI.load_dir (List.nth input 1)) state
+    | "load" -> if (check_file true input) then set_library (UI.load_library (List.nth input 1)) state
+    | "loaddir" -> if (check_file false input) then set_library (UI.load_dir (List.nth input 1)) state
     | "mklibrary" -> ANSITerminal.(print_string [white;on_red] "Unimplemented");print_newline ()
     | "libinfo" -> UI.print_libinfo state
     | "list" -> UI.print_list state input

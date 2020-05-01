@@ -5,7 +5,7 @@
 *)
 val chunks : string -> string list
 
-val check_file : string list -> bool
+val check_file : bool -> string list -> bool
 
 val init_state : State.t
 
