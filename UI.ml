@@ -34,7 +34,7 @@ let print_tracks state =
   if (state.library.lib_name = "") then
     (ANSITerminal.(print_string [white;on_red] "No library loaded");print_newline ();) else
     List.hd (state.library |> list_tracks |> List.sort compare |> List.map
-               (fun s -> ANSITerminal.(print_string [blue] ("- " ^ s ^ "\n"))))
+               (fun s -> ANSITerminal.(print_string [blue] ("- [" ^ s ^ "\n"))))
 
 let rec print_all state artists =
   if (state.library.lib_name = "") then
@@ -69,8 +69,27 @@ let print_view state input =
                                              (List.map (fun y -> ANSITerminal.(print_string [cyan] ("\t - " ^ y ^ "\n"))) x.tracks))))) with 
     | _ -> ()
 
+let play state input = 
+  match List.length input with 
+  | 1 -> (ANSITerminal.(print_string [white;on_red] "Usage: play <artist> [album] [track]");print_newline ();)
+  | 2 -> (ANSITerminal.(print_string [white;on_blue] ("Adding " ^ List.nth input 1 ^ " to queue"));print_newline (););
+    State.add_artist_to_queue (List.nth input 1) state
+  | _ -> (ANSITerminal.(print_string [white;on_red] "Unimplemented");print_newline ();)
 
-let restart state = ANSITerminal.(print_string [white;on_red] "Restarting...");print_newline();set_library (load_library "blank.json") state
+let print_queue state = 
+  if (state.view_queue = []) then
+    (ANSITerminal.(print_string [white;on_red] "Queue is empty");print_newline ();) else
+    List.hd (state.view_queue |> List.map
+               (fun s -> ANSITerminal.(print_string [blue] ("- " ^ s ^ "\n"))))
+
+let skip state = 
+  if (state.view_queue = []) then 
+    (ANSITerminal.(print_string [white;on_red] "Queue is empty");print_newline ();) else
+    begin state.view_queue <- List.tl state.view_queue;
+      state.path_queue <- List.tl state.path_queue end
+
+let restart state = ANSITerminal.(print_string [white;on_red] "Restarting...");
+  print_newline();set_start true state; set_library (load_library "blank.json") state
 
 let print_help () = 
   ANSITerminal.(print_string [blue;Bold] "Available commands:";
@@ -81,5 +100,7 @@ let print_help () =
                 print_endline "\tlist <all|artists|albums|tracks>\tLists the provided field.";
                 print_endline "\tview <artist> <name>\t\t\tView details about the provided category and name.";
                 print_endline "\tplay <artist> [album] [track]\t\tPlays desired media.";
+                print_endline "\tqueue\t\t\t\t\tDisplays track queue.";
+                print_endline "\tskip\t\t\t\t\tSkips current track.";
                 print_endline "\trestart\t\t\t\t\tRestarts OCAML (unloads library).";
                 print_endline "\tquit\t\t\t\t\tQuit OCAML.")
