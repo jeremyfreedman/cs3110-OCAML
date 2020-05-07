@@ -13,7 +13,7 @@ let check_file file input =
 
 let init_state = {library = {lib_name = ""; artists = []}; start = true; 
                   current_artist = ""; current_album = ""; current_track = "";
-                  queue = []}
+                  view_queue = []; path_queue = []}
 
 let rec main state () =
   if (state.start) then (ANSITerminal.(print_string [blue;on_white;Bold]
@@ -33,7 +33,9 @@ let rec main state () =
     | "libinfo" -> UI.print_libinfo state
     | "list" -> UI.print_list state input
     | "view" -> UI.print_view state input
-    | "play" -> ANSITerminal.(print_string [white;on_red] "Unimplemented");print_newline ()
+    | "play" -> UI.play state input
+    | "queue" -> UI.print_queue state
+    | "skip" -> UI.skip state
     | "restart" -> UI.restart state
     | "quit" -> ANSITerminal.(print_string [white;on_red] "Goodbye!");print_newline ();exit 0
     | other -> ANSITerminal.(print_string [white;on_red] ("Unknown command " ^ other));print_newline ()

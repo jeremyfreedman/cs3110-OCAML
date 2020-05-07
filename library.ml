@@ -58,6 +58,15 @@ let get_album artist album t =
                                                        .albums))
   with Failure s -> raise (UnknownAlbum album)
 
+let get_artist_path artist t = 
+  t.lib_name ^ "/" ^ artist
+
+let get_album_path artist album t =
+  get_artist_path artist t ^ "/" ^ album
+
+let get_track_path artist album track t =
+  get_album_path artist album t ^ "/" ^ track
+
 let add_artist artist t =
   {lib_name = t.lib_name; artists = {name = artist; albums = []}::t.artists}
 

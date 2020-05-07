@@ -68,6 +68,13 @@ val get_artist : artist_name -> t -> artist
     [UnknownAlbum] if album is not present in library.*)
 val get_album : artist_name -> album_title -> t -> album 
 
+val get_artist_path : artist_name -> t -> string
+
+val get_album_path : artist_name -> album_title -> t -> string
+
+val get_track_path : artist_name -> album_title -> track_title -> t -> string
+
+
 (** [add_artist t artist] creates new library object that is identical to [t] but
     includes new artist with name [artist]. *)
 val add_artist : artist_name -> t -> t
