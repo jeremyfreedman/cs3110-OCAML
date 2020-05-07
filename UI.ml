@@ -73,7 +73,7 @@ let play state input =
   match List.length input with 
   | 1 -> (ANSITerminal.(print_string [white;on_red] "Usage: play <artist> [album] [track]");print_newline ();)
   | 2 -> (ANSITerminal.(print_string [white;on_blue] ("Adding " ^ List.nth input 1 ^ " to queue"));print_newline (););
-    State.add_artist_to_queue (List.nth input 1) state
+    State.add_artist_to_queue (List.nth input 1) state;State.write_queue state
   | _ -> (ANSITerminal.(print_string [white;on_red] "Unimplemented");print_newline ();)
 
 let print_queue state = 

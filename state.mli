@@ -50,3 +50,4 @@ val add_artist_to_queue : Library.artist_name -> t -> unit
 val add_track_to_queue : Library.artist_name -> Library.album_title -> 
   Library.track_title -> t -> unit
 
+val write_queue : t -> unit

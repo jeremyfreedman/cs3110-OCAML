@@ -31,5 +31,11 @@ let add_artist_to_queue artist state =
   List.iter (fun album -> add_album_to_queue artist album state)
     ((Library.get_artist artist state.library).albums |> List.map (fun x -> x.title))
 
+let write_queue state = 
+  let oc = open_out_gen [Open_wronly] 0o644 "queue.pls" in 
+  ignore (List.map (fun x -> output_string oc (x ^ "\n")) 
+            (List.rev state.path_queue));
+  flush oc
+
 let set_library library state = state.library <- library;
   set_artist "" state; set_album "" state; set_track "" state;
