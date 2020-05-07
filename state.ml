@@ -1,16 +1,35 @@
+open Library
+
 type t = {
   mutable library : Library.t;
   mutable start : bool;
   mutable current_artist : Library.artist_name;
   mutable current_album : Library.album_title;
   mutable current_track : Library.track_title;
-  mutable queue : Library.track_title list
+  mutable view_queue : Library.track_title list;
+  mutable path_queue : string list
 }
 
 let set_start start state = state.start <- start 
 let set_artist artist state = state.current_artist <- artist
 let set_album album state = state.current_album <- album
 let set_track track state = state.current_track <- track 
-let add_to_queue track state = state.queue <- track::state.queue
+
+let add_album_to_queue artist album state = 
+  let new_tracks = (Library.get_album artist album state.library).tracks in
+  state.view_queue <- state.view_queue@new_tracks;
+  let new_paths = List.fold_left
+      (fun acc t -> (Library.get_track_path artist album t state.library)::acc)
+      [] new_tracks in
+  state.path_queue <- new_paths@state.path_queue
+
+let add_track_to_queue artist album track state =
+  state.view_queue <- track::state.view_queue;state.path_queue
+  <- Library.get_track_path artist album track state.library::state.path_queue
+
+let add_artist_to_queue artist state = 
+  List.iter (fun album -> add_album_to_queue artist album state)
+    ((Library.get_artist artist state.library).albums |> List.map (fun x -> x.title))
+
 let set_library library state = state.library <- library;
-  set_artist "" state; set_album "" state; set_track "" state
+  set_artist "" state; set_album "" state; set_track "" state;

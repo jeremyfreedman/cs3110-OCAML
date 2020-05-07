@@ -13,7 +13,8 @@ type t = {
   mutable current_artist : Library.artist_name;
   mutable current_album : Library.album_title;
   mutable current_track : Library.track_title;
-  mutable queue : Library.track_title list
+  mutable view_queue : Library.track_title list;
+  mutable path_queue : string list;
 }
 
 (** [set_library library state] Sets the library field of [state] to 
@@ -36,7 +37,16 @@ val set_album : Library.album_title -> t -> unit
     [track]. *)
 val set_track : Library.track_title -> t -> unit
 
-(** [add_to_queue track state] Adds [track] to the queue field (list) in 
-    [state]. *)
-val add_to_queue : Library.track_title -> t -> unit
+(** [add_album_to_queue artist album state] Adds the entirety of [album]
+    to [view_queue] field, and track paths to [path_queue] in [state]. *)
+val add_album_to_queue : Library.artist_name -> Library.album_title -> t -> unit
+
+(** [add_artist_to_queue artist state] Adds the entirety of [artist]'s tracks
+    to [view_queue] field, and track paths to [path_queue] in [state]. *)
+val add_artist_to_queue : Library.artist_name -> t -> unit
+
+(** [add_track_to_queue artist album track state] Adds [track] to [view_queue]
+    field, and track path to [path_queue] in [state]. *)
+val add_track_to_queue : Library.artist_name -> Library.album_title -> 
+  Library.track_title -> t -> unit
 
