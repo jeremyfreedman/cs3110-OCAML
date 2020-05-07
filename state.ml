@@ -20,22 +20,26 @@ let add_album_to_queue artist album state =
   state.view_queue <- state.view_queue@new_tracks;
   let new_paths = List.fold_left
       (fun acc t -> (Library.get_track_path artist album t state.library)::acc)
-      [] new_tracks in
+      [] (List.rev new_tracks) in
   state.path_queue <- new_paths@state.path_queue
 
 let add_track_to_queue artist album track state =
-  state.view_queue <- track::state.view_queue;state.path_queue
+  state.view_queue <- track::state.view_queue; state.path_queue
   <- Library.get_track_path artist album track state.library::state.path_queue
 
 let add_artist_to_queue artist state = 
   List.iter (fun album -> add_album_to_queue artist album state)
     ((Library.get_artist artist state.library).albums |> List.map (fun x -> x.title))
 
+let wipe_queue () =
+  let oc = open_out_gen [Open_trunc] 0o666 "queue.pls" in close_out oc
+
 let write_queue state = 
-  let oc = open_out_gen [Open_wronly] 0o644 "queue.pls" in 
+  wipe_queue ();
+  let oc = open_out_gen [Open_wronly] 0o666 "queue.pls" in 
   ignore (List.map (fun x -> output_string oc (x ^ "\n")) 
-            (List.rev state.path_queue));
-  flush oc
+            state.path_queue);
+  close_out oc
 
 let set_library library state = state.library <- library;
   set_artist "" state; set_album "" state; set_track "" state;
