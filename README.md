@@ -7,31 +7,36 @@
 - View artists, albums, tracks, or all at once
 - View details about individual artist or album
 ## Instructions
-- ### Getting started
+- ### Dependencies
   - Install the necessary dependencies using OPAM:
-    - `Yojson==1.7.0`
-    - `ANSITerminal==0.8.2`
+    - `opam install depext`
+    - `opam depext Yojson ANSITerminal ao`
+    - `opam install Yojson ANSITerminal ao`
+- ### Compatibility
+  - I've tested the `ao` audio library on a Dell XPS 15 9570 running Ubuntu 20.04. I have not had success getting audio playback on Windows (WSL).
+- ### Getting started
   - Run OCAML with `make`.
-  - Run `help` to see available instructions.
+  - With OCAML running, run `help` to see available instructions.
   - Need further assistance? `make docs` will generate interface documentation in HTML format.
   - Note: file paths can be absolute (ie. `/home/user/music_library.json`) or relative to OCAML's root directory (ie `testlib.json`).
 - ### `loaddir`
   - If you wish to use OCAML with a library of music files stored on disk, they must be arranged as follows:
   ```
   - lib_name/
-    - Artist 1/
-      - Album 1/
+    - Artist_1/
+      - Album_1/
         - track_1.ext
         - track_2.ext
-      - Album 2/
+      - Album_2/
         - track_3.ext
         - track_4.ext
-    - Artist 2/
-      - Album 3/
+    - Artist_2/
+      - Album_3/
         - track_5.ext
   (etc.)
   ```
-  - Once this file structure is established, run `loaddir lib_name`
+  - *Note*: File and folder names cannot contain spaces at this time.
+  - Once this file structure is established, run `loaddir <lib_name>`
 ## Todo
 - Audio playback
 - Writing directory-read library to JSON file
