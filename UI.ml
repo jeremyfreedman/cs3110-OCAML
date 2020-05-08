@@ -17,24 +17,24 @@ let print_libinfo state =
 let print_artists state = 
   if (state.library.lib_name = "") then
     (ANSITerminal.(print_string [white;on_red] "No library loaded");print_newline ();) else
-    List.hd (state.library |> list_artists |> List.sort compare |>
-             List.map (fun x -> x.name) |> 
-             List.map (fun s -> ANSITerminal.(print_string [blue]
-                                                ("- " ^ s ^ "\n"))))
+    ignore (state.library |> list_artists |> List.sort compare |>
+            List.map (fun x -> x.name) |> 
+            List.map (fun s -> ANSITerminal.(print_string [blue]
+                                               ("- " ^ s ^ "\n"))))
 
 let print_albums state = 
   if (state.library.lib_name = "") then
     (ANSITerminal.(print_string [white;on_red] "No library loaded");print_newline ();) else
-    List.hd (state.library |> list_albums |> List.sort compare |> 
-             List.map (fun x -> x.title) |>
-             List.map (fun s -> ANSITerminal.(print_string [blue]
-                                                ("- " ^ s ^ "\n"))))
+    ignore (state.library |> list_albums |> List.sort compare |> 
+            List.map (fun x -> x.title) |>
+            List.map (fun s -> ANSITerminal.(print_string [blue]
+                                               ("- " ^ s ^ "\n"))))
 
 let print_tracks state = 
   if (state.library.lib_name = "") then
     (ANSITerminal.(print_string [white;on_red] "No library loaded");print_newline ();) else
-    List.hd (state.library |> list_tracks |> List.sort compare |> List.map
-               (fun s -> ANSITerminal.(print_string [blue] ("- [" ^ s ^ "\n"))))
+    ignore (state.library |> list_tracks |> List.sort compare |> List.map
+              (fun s -> ANSITerminal.(print_string [blue] ("- " ^ s ^ "\n"))))
 
 let rec print_all state artists =
   if (state.library.lib_name = "") then
@@ -50,13 +50,12 @@ let rec print_all state artists =
                    print_newline ());print_all state t
 
 let print_list state input = 
-  if (List.length input = 1) then
-    (ANSITerminal.(print_string [white;on_red] "Usage: list <all|artists|albums|tracks>");print_newline ();)
-  else if (List.nth input 1 = "all") then print_all state (state.library |> list_artists)
-  else if (List.nth input 1 = "artists") then print_artists state 
-  else if (List.nth input 1 = "albums") then print_albums state 
-  else if (List.nth input 1 = "tracks") then print_tracks state 
-  else (ANSITerminal.(print_string [white;on_red] "Usage: list <all|artists|albums|tracks>");print_newline ();)
+  match input with 
+  | ["list"; "all"] -> print_all state (state.library |> list_artists)
+  | ["list"; "artists"] -> print_artists state 
+  | ["list"; "albums"] -> print_albums state 
+  | ["list"; "tracks"] -> print_tracks state
+  | _ -> (ANSITerminal.(print_string [white;on_red] "Usage: list <all|artists|albums|tracks>");print_newline ();)
 
 let print_view state input = 
   if (List.length input < 2) then
@@ -69,6 +68,12 @@ let print_view state input =
                                              (List.map (fun y -> ANSITerminal.(print_string [cyan] ("\t - " ^ y ^ "\n"))) x.tracks))))) with 
     | _ -> ()
 
+let now_playing state = 
+  match state.current_track with
+  | "" -> (ANSITerminal.(print_string [white;on_red] "No track currently playing");print_newline ();)
+  | title -> let t = [state.current_track; state.current_album ; state.current_artist] in
+    (ANSITerminal.(print_string [cyan] (String.concat " - " t));print_newline ();)
+
 let play state input = 
   match List.length input with 
   | 1 -> (ANSITerminal.(print_string [white;on_red] "Usage: play <artist> [album] [track]");print_newline ();)
@@ -78,10 +83,13 @@ let play state input =
   | _ -> (ANSITerminal.(print_string [white;on_red] "Unimplemented");print_newline ();)
 
 let print_queue state = 
-  if (state.view_queue = []) then
-    (ANSITerminal.(print_string [white;on_red] "Queue is empty");print_newline ();) else
-    List.hd (state.view_queue |> List.map
-               (fun s -> ANSITerminal.(print_string [blue] ("- " ^ s ^ "\n"))))
+  match state.view_queue with 
+  | [] -> (ANSITerminal.(print_string [white;on_red] "Queue is empty");print_newline ();)
+  | _ -> ignore (state.view_queue |> List.map
+                   (fun s -> ANSITerminal.(print_string [blue] ("- " ^ s ^ "\n"))))
+
+let clear state = State.clear_queue state; State.wipe_queue (); 
+  State.reload_liq state
 
 let stop state = 
   if (state.view_queue = []) then 
@@ -108,8 +116,11 @@ let print_help () =
                 print_endline "\tlibinfo\t\t\t\t\tGives stats about the currently open library.";
                 print_endline "\tlist <all|artists|albums|tracks>\tLists the provided field.";
                 print_endline "\tview <artist> <name>\t\t\tView details about the provided category and name.";
+                print_endline "\tnowplaying\t\t\t\tDisplays current track info.";
                 print_endline "\tplay <artist> [album] [track]\t\tPlays desired media.";
                 print_endline "\tqueue\t\t\t\t\tDisplays track queue.";
+                print_endline "\tclear\t\t\t\t\tClears queue and current track.";
                 print_endline "\tskip\t\t\t\t\tSkips current track.";
+                print_endline "\tstop\t\t\t\t\tStops playback.";
                 print_endline "\trestart\t\t\t\t\tRestarts OCAML (unloads library).";
                 print_endline "\tquit\t\t\t\t\tQuit OCAML.")

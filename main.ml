@@ -29,7 +29,7 @@ let rec main state () =
                      The Ocaml Comprehensive Audio & Music Library!\n";
                    print_newline ();
                    print_endline "Run 'help' to get started!\n";));
-    State.wipe_queue; State.set_start false state;
+    State.wipe_queue (); State.set_start false state;
     Unix.chmod "play.sh" 0o755; main state ()
   | false ->
     ANSITerminal.(print_string [red;on_white] (state.library.lib_name));
@@ -50,13 +50,15 @@ let rec main state () =
       | "libinfo" -> UI.print_libinfo state
       | "list" -> UI.print_list state input
       | "view" -> UI.print_view state input
+      | "nowplaying" -> UI.now_playing state
       | "play" -> UI.play state input
       | "queue" -> UI.print_queue state
+      | "clear" -> UI.clear state
       | "skip" -> UI.skip state
       | "resume" -> State.reload_liq state
       | "stop" -> UI.stop state
       | "restart" -> UI.restart state
-      | "quit" -> State.wipe_queue; State.stop_liq state;
+      | "quit" -> State.wipe_queue (); State.stop_liq state;
         ANSITerminal.(print_string [white;on_red] "Goodbye!");print_newline ();
         exit 0
       | other ->

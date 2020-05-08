@@ -35,11 +35,11 @@ let add_artist_to_queue artist state =
 let clear_queue state = 
   state.view_queue <- []; state.path_queue <- []
 
-let wipe_queue =
+let wipe_queue () =
   let oc = open_out_gen [Open_trunc] 0o777 "queue.pls" in close_out oc
 
 let write_queue state = 
-  wipe_queue;
+  wipe_queue ();
   let oc = open_out_gen [Open_wronly] 0o777 "queue.pls" in 
   ignore (List.map (fun x -> output_string oc (x ^ "\n")) 
             state.path_queue);
@@ -52,4 +52,9 @@ let init_liq () = Unix.open_process_args "./play.sh" [||]
 
 let stop_liq state = Unix.kill (Unix.process_pid state.liq_io) 9
 
-let reload_liq state = stop_liq state; state.liq_io <- init_liq ()
+let reload_liq state = stop_liq state; state.liq_io <- init_liq ();
+  match state.path_queue with
+  | [] -> set_track "" state; set_album "" state; set_artist "" state 
+  | h::t -> let info = List.tl (String.split_on_char '/' h) in 
+    set_artist (List.hd info) state; set_album (List.hd (List.tl info)) state; 
+    set_track (List.hd (List.tl (List.tl info))) state

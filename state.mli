@@ -55,7 +55,7 @@ val add_track_to_queue : Library.artist_name -> Library.album_title ->
 val clear_queue : t -> unit
 
 (** [wipe_queue unit] removes all values [queue.pls] on disk. *)
-val wipe_queue : unit
+val wipe_queue : unit -> unit
 
 (** [write_queue state] writes the queue stored in [state] to [queue.pls] for
     Liquidsoap-supported playback. *)

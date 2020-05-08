@@ -22,9 +22,13 @@ val print_list : State.t -> string list -> unit
 
 val print_view : State.t -> string list -> unit
 
+val now_playing : State.t -> unit
+
 val play : State.t -> string list -> unit
 
 val print_queue : State.t -> unit
+
+val clear : State.t -> unit
 
 val skip : State.t -> unit
 
