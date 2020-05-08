@@ -15,6 +15,7 @@ type t = {
   mutable current_track : Library.track_title;
   mutable view_queue : Library.track_title list;
   mutable path_queue : string list;
+  mutable liq_io : (in_channel * out_channel)
 }
 
 (** [set_library library state] Sets the library field of [state] to 
@@ -50,6 +51,16 @@ val add_artist_to_queue : Library.artist_name -> t -> unit
 val add_track_to_queue : Library.artist_name -> Library.album_title -> 
   Library.track_title -> t -> unit
 
-val wipe_queue : unit -> unit
+(** [wipe_queue unit] removes all values [queue.pls] on disk. *)
+val wipe_queue : unit
 
+(** [write_queue state] writes the queue stored in [state] to [queue.pls] for
+    Liquidsoap-supported playback. *)
 val write_queue : t -> unit
+
+(** [init_liq] runs the Liquidsoap script [play.liq] in a parallel process. *)
+val init_liq : in_channel * out_channel
+
+val stop_liq : t -> unit
+
+val reload_liq : t -> unit

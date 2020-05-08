@@ -7,7 +7,8 @@ type t = {
   mutable current_album : Library.album_title;
   mutable current_track : Library.track_title;
   mutable view_queue : Library.track_title list;
-  mutable path_queue : string list
+  mutable path_queue : string list;
+  mutable liq_io : (in_channel * out_channel)
 }
 
 let set_start start state = state.start <- start 
@@ -31,15 +32,21 @@ let add_artist_to_queue artist state =
   List.iter (fun album -> add_album_to_queue artist album state)
     ((Library.get_artist artist state.library).albums |> List.map (fun x -> x.title))
 
-let wipe_queue () =
+let wipe_queue =
   let oc = open_out_gen [Open_trunc] 0o777 "queue.pls" in close_out oc
 
 let write_queue state = 
-  wipe_queue ();
+  wipe_queue;
   let oc = open_out_gen [Open_wronly] 0o777 "queue.pls" in 
   ignore (List.map (fun x -> output_string oc (x ^ "\n")) 
             state.path_queue);
   close_out oc
 
 let set_library library state = state.library <- library;
-  set_artist "" state; set_album "" state; set_track "" state;
+  set_artist "" state; set_album "" state; set_track "" state
+
+let init_liq = Unix.open_process_args "play.liq" [||]
+
+let stop_liq state = Unix.kill (Unix.process_pid state.liq_io) 9
+
+let reload_liq state = stop_liq state; state.liq_io <- init_liq

@@ -28,6 +28,8 @@ val print_queue : State.t -> unit
 
 val skip : State.t -> unit
 
+val stop : State.t -> unit
+
 val restart : State.t -> unit
 
 val print_help : unit -> unit

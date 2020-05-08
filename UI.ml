@@ -72,8 +72,9 @@ let print_view state input =
 let play state input = 
   match List.length input with 
   | 1 -> (ANSITerminal.(print_string [white;on_red] "Usage: play <artist> [album] [track]");print_newline ();)
-  | 2 -> (ANSITerminal.(print_string [white;on_blue] ("Adding " ^ List.nth input 1 ^ " to queue"));print_newline (););
-    State.add_artist_to_queue (List.nth input 1) state
+  | 2 -> (ANSITerminal.(print_string [white;on_blue]("Adding " ^ List.nth input 1 ^ " to queue"));print_newline (););
+    State.add_artist_to_queue (List.nth input 1) state;
+    reload_liq state
   | _ -> (ANSITerminal.(print_string [white;on_red] "Unimplemented");print_newline ();)
 
 let print_queue state = 
@@ -87,6 +88,11 @@ let skip state =
     (ANSITerminal.(print_string [white;on_red] "Queue is empty");print_newline ();) else
     begin state.view_queue <- List.tl state.view_queue;
       state.path_queue <- List.tl state.path_queue end
+
+let stop state = 
+  if (state.view_queue = []) then 
+    (ANSITerminal.(print_string [white;on_red] "Queue is empty");print_newline ();) else
+    stop_liq state
 
 let restart state = ANSITerminal.(print_string [white;on_red] "Restarting...");
   print_newline();set_start true state; set_library (load_library "blank.json") state
