@@ -32,6 +32,9 @@ let add_artist_to_queue artist state =
   List.iter (fun album -> add_album_to_queue artist album state)
     ((Library.get_artist artist state.library).albums |> List.map (fun x -> x.title))
 
+let clear_queue state = 
+  state.view_queue <- []; state.path_queue <- []
+
 let wipe_queue =
   let oc = open_out_gen [Open_trunc] 0o777 "queue.pls" in close_out oc
 
@@ -45,8 +48,8 @@ let write_queue state =
 let set_library library state = state.library <- library;
   set_artist "" state; set_album "" state; set_track "" state
 
-let init_liq = Unix.open_process_args "play.liq" [||]
+let init_liq () = Unix.open_process_args "./play.sh" [||]
 
 let stop_liq state = Unix.kill (Unix.process_pid state.liq_io) 9
 
-let reload_liq state = stop_liq state; state.liq_io <- init_liq
+let reload_liq state = stop_liq state; state.liq_io <- init_liq ()

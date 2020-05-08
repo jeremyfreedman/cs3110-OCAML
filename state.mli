@@ -51,6 +51,9 @@ val add_artist_to_queue : Library.artist_name -> t -> unit
 val add_track_to_queue : Library.artist_name -> Library.album_title -> 
   Library.track_title -> t -> unit
 
+(** [clear_queue state] clears the queues stored in [state]. *)
+val clear_queue : t -> unit
+
 (** [wipe_queue unit] removes all values [queue.pls] on disk. *)
 val wipe_queue : unit
 
@@ -58,8 +61,8 @@ val wipe_queue : unit
     Liquidsoap-supported playback. *)
 val write_queue : t -> unit
 
-(** [init_liq] runs the Liquidsoap script [play.liq] in a parallel process. *)
-val init_liq : in_channel * out_channel
+(** [init_liq] runs the Liquidsoap script [play.sh] in a parallel process. *)
+val init_liq : unit -> in_channel * out_channel
 
 val stop_liq : t -> unit
 

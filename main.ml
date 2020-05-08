@@ -18,7 +18,7 @@ let check_file file input =
 
 let init_state = {library = {lib_name = ""; artists = []}; start = true; 
                   current_artist = ""; current_album = ""; current_track = "";
-                  view_queue = []; path_queue = []; liq_io = State.init_liq}
+                  view_queue = []; path_queue = []; liq_io = State.init_liq ()}
 
 let rec main state () =
   match state.start with 
@@ -30,7 +30,7 @@ let rec main state () =
                    print_newline ();
                    print_endline "Run 'help' to get started!\n";));
     State.wipe_queue; State.set_start false state;
-    Unix.chmod "play.liq" 0o755;main state ()
+    Unix.chmod "play.sh" 0o755; main state ()
   | false ->
     ANSITerminal.(print_string [red;on_white] (state.library.lib_name));
     ANSITerminal.(print_string [red;on_white;Bold] " > ";print_string [] " ");
@@ -53,6 +53,7 @@ let rec main state () =
       | "play" -> UI.play state input
       | "queue" -> UI.print_queue state
       | "skip" -> UI.skip state
+      | "resume" -> State.reload_liq state
       | "stop" -> UI.stop state
       | "restart" -> UI.restart state
       | "quit" -> State.wipe_queue; State.stop_liq state;
