@@ -24,13 +24,15 @@ exception UnknownTrack of track_title
 exception UnknownAlbum of album_title 
 exception UnknownArtist of artist_name
 
-(** [load_album json] create [album] objects based on the contents of [json]. *)
+(** [load_album json] create [album] objects based on the contents of
+    [json]. *)
 let load_album json = {
   title = json |> member "title" |> to_string;
   tracks = json |> member "tracks" |> to_list |> List.map to_string;
 }
 
-(** [load_artist json] create [artist] objects based on the contents of [json]. *)
+(** [load_artist json] create [artist] objects based on the contents of
+    [json]. *)
 let load_artist json = {
   name = json |> member "name" |> to_string; 
   albums = json |> member "albums" |> to_list |> List.map load_album;
@@ -45,9 +47,11 @@ let load_library json = {
 
 let list_artists t = t.artists
 
-let list_albums t = list_artists t |> List.map (fun x -> x.albums) |> List.flatten
+let list_albums t = list_artists t |> List.map (fun x -> x.albums)
+                    |> List.flatten
 
-let list_tracks t = list_albums t |> List.map (fun x -> x.tracks) |> List.flatten
+let list_tracks t = list_albums t |> List.map (fun x -> x.tracks)
+                    |> List.flatten
 
 let get_artist artist t =
   try (List.hd (List.filter (fun x -> x.name = artist) t.artists))
@@ -77,8 +81,10 @@ let add_album artist album t =
   {lib_name = t.lib_name; artists = n_artist::missing_artist}
 
 let add_track artist album track t = 
-  let n_album = {title = album; tracks = track::(get_album artist album t).tracks} in
-  let missing_albums = List.filter (fun x -> x.title <> album) (get_artist artist t).albums in
+  let n_album = {title = album; tracks = track::
+                                         (get_album artist album t).tracks} in
+  let missing_albums = List.filter (fun x -> x.title <> album)
+      (get_artist artist t).albums in
   let n_artist = {name = artist; albums = n_album::missing_albums} in
   let missing_artists = List.filter (fun x -> x.name <> artist) t.artists in
   {lib_name = t.lib_name; artists = n_artist::missing_artists}
