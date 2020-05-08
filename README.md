@@ -23,7 +23,7 @@
   - Need further assistance? `make docs` will generate interface documentation in HTML format.
   - Note: file paths can be absolute (ie. `/home/user/music_library.json`) or relative to OCAML's root directory (ie `testlib.json`).
 - ### `load`
-  - Using OCAML with a JSON file was solely implemented as a proof-of-concept and will not work with audio playback or any useful features. Use `loaddir` on a directory of music instead (see below).
+  - Using OCAML with a JSON file was solely implemented as a proof-of-concept and will not work with audio playback, queueing, or any useful features. Use `loaddir` on a directory of music instead (see below).
 - ### `loaddir`
   - If you wish to use OCAML with a library of music files stored on disk, they must be arranged as follows:
   ```
@@ -45,3 +45,7 @@
 ## Todo
 - Writing directory-read library to JSON file
 - Sorting library by audio metadata/tags
+## Acknowledgements
+- Megan Rait, QA engineer
+- Arjun Sweet, resident Griggologist
+- Micah, dog
