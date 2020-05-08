@@ -21,8 +21,8 @@ let add_album_to_queue artist album state =
   state.view_queue <- state.view_queue@new_tracks;
   let new_paths = List.fold_left
       (fun acc t -> (Library.get_track_path artist album t state.library)::acc)
-      [] (List.rev new_tracks) in
-  state.path_queue <- state.path_queue@new_paths
+      [] new_tracks in
+  state.path_queue <- state.path_queue@(List.rev new_paths)
 
 let add_track_to_queue artist album track state =
   state.view_queue <- track::state.view_queue; state.path_queue
