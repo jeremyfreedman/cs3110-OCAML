@@ -6,19 +6,24 @@
 - View library stats
 - View artists, albums, tracks, or all at once
 - View details about individual artist or album
+- Play an artist's tracks (skip, stop, resume playback)
+- Queue up multiple artists
 ## Instructions
 - ### Dependencies
   - Install the necessary dependencies using OPAM:
-    - `opam install depext`
-    - `opam depext Yojson ANSITerminal ao`
-    - `opam install Yojson ANSITerminal ao`
+    1. `opam install depext`
+    2. `opam depext Yojson ANSITerminal mad taglib liquidsoap`
+    3. `opam install Yojson ANSITerminal mad taglib liquidsoap`
 - ### Compatibility
-  - I've tested the `ao` audio library on a Dell XPS 15 9570 running Ubuntu 20.04. I have not had success getting audio playback on Windows (WSL).
+  - Audio playback uses Liquidsoap's `output.prefered`, which means it *should* be able to locate your audio driver independently. I've tested playback on a Dell XPS 15 9570 running Ubuntu 20.04 with Pulseaudio. I have not had success getting audio playback on Windows (WSL), so your milage may vary.
+  - I would presume OCAML does not work on macOS, but I have no way to test this. It depends on OCaml's `Unix` library which probably has compatibility issues with macOS.
 - ### Getting started
   - Run OCAML with `make`.
   - With OCAML running, run `help` to see available instructions.
   - Need further assistance? `make docs` will generate interface documentation in HTML format.
   - Note: file paths can be absolute (ie. `/home/user/music_library.json`) or relative to OCAML's root directory (ie `testlib.json`).
+- ### `load`
+  - Using OCAML with a JSON file was solely implemented as a proof-of-concept and will not work with audio playback or any useful features. Use `loaddir` on a directory of music instead (see below).
 - ### `loaddir`
   - If you wish to use OCAML with a library of music files stored on disk, they must be arranged as follows:
   ```
@@ -38,6 +43,5 @@
   - *Note*: File and folder names cannot contain spaces at this time.
   - Once this file structure is established, run `loaddir <lib_name>`
 ## Todo
-- Audio playback
 - Writing directory-read library to JSON file
 - Sorting library by audio metadata/tags
