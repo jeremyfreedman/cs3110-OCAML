@@ -61,9 +61,16 @@ val wipe_queue : unit -> unit
     Liquidsoap-supported playback. *)
 val write_queue : t -> unit
 
-(** [init_liq] runs the Liquidsoap script [play.sh] in a parallel process. *)
+(** [init_liq] runs the Liquidsoap script [play.sh] in a parallel process.
+    Note: do not call this without capturing its output or you will have to 
+    manually terminate Liquidsoap. *)
 val init_liq : unit -> in_channel * out_channel
 
+(** [stop_liq state] kills the Liquidsoap process stored in the [liq_io] field
+    in [state]. *)
 val stop_liq : t -> unit
 
+(** [reload_liq state] kills the Liquidsoap process stored in [state] and 
+    spawns a new one. It also assigns the [current_artist], [current_album], 
+    and [current_track] fields of [state]. *)
 val reload_liq : t -> unit
