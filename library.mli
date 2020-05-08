@@ -39,8 +39,10 @@ type t = {
 
 (** Raised when an unknown track is requested. *)
 exception UnknownTrack of track_title
+
 (** Raised when an unknown album is requested. *)
 exception UnknownAlbum of album_title
+
 (** Raised when an unknown artist is requested. *)
 exception UnknownArtist of album_title
 
