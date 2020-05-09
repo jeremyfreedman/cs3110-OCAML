@@ -12,14 +12,19 @@ val load_library : string -> Library.t
     object. *)
 val load_dir : string -> Library.t
 
+(** [print_libinfo state] prints basic library statistics. *)
 val print_libinfo : State.t -> unit
 
+(** [print_artists state] prints artists in library. *)
 val print_artists : State.t -> unit
 
+(** [print_albums state] prints albums in library. *)
 val print_albums : State.t -> unit
 
+(** [print_tracks state] prints tracks in library. *)
 val print_tracks : State.t -> unit
 
+(** [print_artists state] prints all content in library. *)
 val print_all : State.t -> Library.artist list -> unit
 
 (** [print_list state input] prints information stored in the requested 

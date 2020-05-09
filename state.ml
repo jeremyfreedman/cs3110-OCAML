@@ -30,7 +30,8 @@ let add_track_to_queue artist album track state =
 
 let add_artist_to_queue artist state = 
   List.iter (fun album -> add_album_to_queue artist album state)
-    ((Library.get_artist artist state.library).albums |> List.map (fun x -> x.title))
+    ((Library.get_artist artist state.library).albums |>
+     List.map (fun x -> x.title))
 
 let clear_queue state = 
   state.view_queue <- []; state.path_queue <- []

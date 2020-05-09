@@ -20,7 +20,7 @@ let init_state = {library = {lib_name = ""; artists = []}; start = true;
                   current_artist = ""; current_album = ""; current_track = "";
                   view_queue = []; path_queue = []; liq_io = State.init_liq ()}
 
-let rec main state () =
+let rec main state =
   match state.start with 
   | true ->
     (ANSITerminal.(print_string [blue;on_white;Bold]
@@ -30,7 +30,7 @@ let rec main state () =
                    print_newline ();
                    print_endline "Run 'help' to get started!\n";));
     State.wipe_queue (); State.set_start false state;
-    Unix.chmod "play.sh" 0o755; main state ()
+    Unix.chmod "play.sh" 0o755; main state
   | false ->
     ANSITerminal.(print_string [red;on_white] (state.library.lib_name));
     ANSITerminal.(print_string [red;on_white;Bold] " > ";print_string [] " ");
@@ -65,6 +65,6 @@ let rec main state () =
         ANSITerminal.(print_string [white;on_red] ("Unknown command " ^ other));
         print_newline ()
     end;
-    main state ()
+    main state
 
-let () = main init_state ()
+let () = main init_state
