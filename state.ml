@@ -53,9 +53,12 @@ let init_liq () = Unix.open_process_args "./play.sh" [||]
 
 let stop_liq state = Unix.kill (Unix.process_pid state.liq_io) 9
 
-let reload_liq state = stop_liq state; state.liq_io <- init_liq ();
+let reload_liq state = 
+  stop_liq state; state.liq_io <- init_liq ();
   match state.path_queue with
   | [] -> set_track "" state; set_album "" state; set_artist "" state 
-  | h::t -> let info = List.tl (String.split_on_char '/' h) in 
-    set_artist (List.hd info) state; set_album (List.hd (List.tl info)) state; 
-    set_track (List.hd (List.tl (List.tl info))) state
+  | h::t ->
+    match (String.split_on_char '/' h) with 
+    | _::artist::album::track::_ -> set_artist artist state;
+      set_album album state; set_track track state
+    | _ -> failwith "Malformed path queue"

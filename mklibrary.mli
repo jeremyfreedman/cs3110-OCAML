@@ -7,7 +7,7 @@
 (** Raised when a nonexistent directory is passed. *)
 exception NoDir of string 
 
-(** [read_dir dir] returns the contents of [dir] on disk.  
+(** [read_dir dir] returns the top-level contents of [dir] on disk.  
     Raises: [NoDir] if [dir] is not present. *)
 val read_dir : string -> string list
 

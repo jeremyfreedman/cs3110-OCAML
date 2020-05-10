@@ -71,30 +71,13 @@ val get_artist : artist_name -> t -> artist
 val get_album : artist_name -> album_title -> t -> album 
 
 (** [get_artist_path artist t] returns the path of [artist] on disk in library
-    [t]. *)
+    [t]. Does no data valiation. *)
 val get_artist_path : artist_name -> t -> string
 
 (** [get_album_path artist album t] returns the path of [album] by [artist] on
-    disk in library [t]. *)
+    disk in library [t]. Does no data valiation. *)
 val get_album_path : artist_name -> album_title -> t -> string
 
 (** [get_track_path artist album track t] returns the path of [track] in
-    [album] by [artist] on disk in library [t].*)
+    [album] by [artist] on disk in library [t]. Does no data valiation. *)
 val get_track_path : artist_name -> album_title -> track_title -> t -> string
-
-
-(** [add_artist t artist] creates new library object that is identical to [t] but
-    includes new artist with name [artist]. *)
-val add_artist : artist_name -> t -> t
-
-(** [add_album t artist album] creates new library object that is identical to
-    [t] but includes new album with title [album] released by [artist_name].  
-    Raises: [UnknownArtist] if artist is not present in library. *)
-val add_album : artist_name -> album_title -> t -> t
-
-(** [add_track t artist album track] creates new library object that is
-    identical to [t] but includes new track with title [track] in [album]
-    released by [artist_name].  
-    Raises: [UnknownArtist] if artist is not present in library; 
-    [UnknownAlbum] if album is not present in library. *)
-val add_track : artist_name -> album_title -> track_title -> t -> t
