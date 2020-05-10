@@ -25,7 +25,7 @@ finalcheck: check
 	bash finalcheck.sh
 
 zip:
-	zip OCAML.zip *.ml* *.json _tags Makefile 
+	zip -r OCAML.zip *.ml* *.json *.md *.sh *.pls _tags test_library/ test_files/ Makefile 
 	
 docs: docs-public docs-private
 	
