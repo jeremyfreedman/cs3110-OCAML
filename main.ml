@@ -6,15 +6,17 @@ open UI
 let chunks s = String.split_on_char ' ' s
 
 let check_file file input =
-  if (List.length input < 2) then
-    if (file) then
+  match input with
+  | h::[] -> if (file) then
       (ANSITerminal.(print_string [white;on_red] "No filename provided");
        print_newline (); false) else 
       (ANSITerminal.(print_string [white;on_red] "No directory provided");
-       print_newline (); false) else
-    (ANSITerminal.(print_string [white;on_blue]
-                     ("Loading library " ^ List.nth input 1));
-     print_newline (); true)
+       print_newline (); false)
+  | h::file::_ ->  (ANSITerminal.(print_string [white;on_blue]
+                                    ("Loading library " ^ file));
+                    print_newline (); true)
+  | _ -> failwith "Malformed input"
+
 
 let init_state = {library = {lib_name = ""; artists = []}; start = true; 
                   current_artist = ""; current_album = ""; current_track = "";
@@ -41,12 +43,9 @@ let rec main state =
         ANSITerminal.(print_string [white;on_red] "Something went wrong!")
       | "help" -> UI.print_help ()
       | "load" -> if (check_file true input) then
-          set_library (UI.load_library (List.nth input 1)) state
+          set_library (UI.load_library input) state
       | "loaddir" -> if (check_file false input) then
-          set_library (UI.load_dir (List.nth input 1)) state
-      | "mklibrary" -> 
-        ANSITerminal.(print_string [white;on_red] "Unimplemented");
-        print_newline ()
+          set_library (UI.load_dir input) state
       | "libinfo" -> UI.print_libinfo state
       | "list" -> UI.print_list state input
       | "view" -> UI.print_view state input

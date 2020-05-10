@@ -6,11 +6,14 @@
 
 (** [load_library filename] loads the library file stored in [filename] and
     stores it as a [Library.t] object. *)
-val load_library : string -> Library.t
+val load_library : string list -> Library.t
 
 (** [load_dir dir] loads the content in [dir] and stores it as a [Library.t]
     object. *)
-val load_dir : string -> Library.t
+val load_dir : string list -> Library.t
+
+(** [lib_loaded state] prints a helpful error if no library is loaded. *)
+val lib_loaded : State.t -> unit
 
 (** [print_libinfo state] prints basic library statistics. *)
 val print_libinfo : State.t -> unit
