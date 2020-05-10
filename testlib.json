@@ -5,14 +5,14 @@
       "name": "Pond",
       "albums": [
         {
-          "title": "Man It Feels Like Space Again",
+          "title": "Man_It_Feels_Like_Space_Again",
           "tracks": [
             "outside_is_the_right_side.mp3",
             "waiting_around_for_grace.mp3"
           ]
         },
         {
-          "title": "The Weather",
+          "title": "The_Weather",
           "tracks": [
             "30000_megatons.mp3",
             "the_weather.mp3"
@@ -21,10 +21,10 @@
       ]
     },
     {
-      "name": "Tekashi 6ix9ine",
+      "name": "Tekashi_6ix9ine",
       "albums": [
         {
-          "title": "DUMMY BOI",
+          "title": "DUMMY_BOI",
           "tracks": [
             "stoopid.mp3"
           ]
