@@ -1,21 +1,5 @@
 (**
-   Overarching module for user interaction with OCAML.
+   Calls [Control.run] upon a blank, initial state. 
 
-   Sends instructions to [UI.ml] for processing.
+   Has no callable functions or extensible functionality beyond starting OCAML.
 *)
-
-(** [chunks s] splits [s] at each space character into a list. *)
-val chunks : string -> string list
-
-(** [check_file file input] validates [input] includes a valid file or 
-    directory name. The [file] argument (whether the input is a file or
-    directory) is passed simply to improve printouts and user experience. *)
-val check_file : bool -> string list -> bool
-
-(** [init_state] is the initial [State] of OCAML. All fields are essentially
-    empty. *)
-val init_state : State.t
-
-(** [main state] handles user input and control for all interaction with 
-    OCAML. Maintains [state] to track instance data. *)
-val main : State.t -> unit
