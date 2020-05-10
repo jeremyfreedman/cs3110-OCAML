@@ -28,16 +28,20 @@ open State
    - Reading library fields (artists/albums/tracks) from a directory [x]
    - Building a library object [x]
 
-   Control
-   - Verify functionality of string chunking [ ]
-   - Checking if file/dir exist on disk [ ]
+   UI
+   - Loading libraries from JSON [ ]
+   - Loading libraries from directory [ ]
 
-   It would not be practical (or useful) to test any component of [UI], as 
-   every function in that module either returns [unit] or simply calls another
-   module. Its functionality is grounded in printing, which would not be
-   practically testable. I also do not test any functions that interact with
-   Liquidsoap ([State.init_liq, State.stop_liq, State.reload_liq]) or the 
-   queue written to disk ([State.write_queue, State.wipe_queue]) [Main] 
+   Control
+   - Verify functionality of string chunking [x]
+   - Checking if file/dir exist on disk [x]
+
+   It would not be practical (or useful) to test any component of [UI] other
+   than [load_library] and [load_dir], as every other function in that module 
+   simply returns [unit]. Its functionality is grounded in printing, which
+   would not be practically testable. I also do not test any functions that
+   interact with Liquidsoap ([State.init_liq, State.stop_liq, State.reload_liq])
+   or the queue written to disk ([State.write_queue, State.wipe_queue]). [Main] 
    contains nothing that would warrant testing, just a single call to 
    [Control.run].
 *)
@@ -167,6 +171,14 @@ let make_queue_test (name) (field) ?(artist="") ?(album="") ?(track="") (state)
 let make_mklibrary_test (name) (dir) (expected_output) = 
   name >:: fun _ -> assert_equal (Mklibrary.make_library dir) (expected_output)
 
+(** [make_load_library_test name input expected_output] builds an OUnit test
+    case named [name] to verify [UI.load_library input] produces [output]. *)
+let make_load_library_test (name) (input) (expected_output) = 
+  name >:: fun _ -> assert_equal (UI.load_library input) (expected_output) 
+
+let make_load_dir_test (name) (input) (expected_output) = 
+  name >:: fun _ -> assert_equal (UI.load_dir input) (expected_output)
+
 (** [make_chunks_test name str expected_output] builds an OUnit test case named
     [name] to verify [Control.chunks str] produces [expected_output]. *)
 let make_chunks_test (name) (str) (expected_output) =
@@ -288,6 +300,22 @@ let mklibrary_tests = [
     (Mklibrary.NoDir "asdf")
 ]
 
+let ui_tests = [
+  make_load_library_test "Blank" ["load"; "blank.json"] {lib_name = "";
+                                                         artists = []};
+  make_load_library_test "Testlib" ["load"; "testlib.json"] (fst libraries);
+  make_exn_test "Nonexisting lib"
+    (fun () -> UI.load_library ["load"; "asdf.json"])
+    (Sys_error "asdf.json: No such file or directory");
+  make_exn_test "Malformed" (fun () -> UI.load_library []) 
+    (Failure "Malformed input");
+  make_load_dir_test "Test_library" ["loaddir"; "test_library"] (snd libraries);
+  make_exn_test "Nonexisting lib" (fun () -> UI.load_dir ["loaddir"; "asdf"])
+    (Mklibrary.NoDir "asdf");
+  make_exn_test "Malformed" (fun () -> UI.load_dir [])
+    (Failure "Malformed input")
+]
+
 let control_tests = [
   make_chunks_test "Empty string" "" [];
   make_chunks_test "One word" "blah" ["blah"];
@@ -306,7 +334,7 @@ let control_tests = [
 
 let suite =
   "OCAML test suite"  >::: List.flatten [
-    library_tests; state_tests; mklibrary_tests; control_tests
+    library_tests; state_tests; mklibrary_tests; ui_tests; control_tests
   ]
 
 let _ = run_test_tt_main suite
