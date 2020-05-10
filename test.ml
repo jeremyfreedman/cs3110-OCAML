@@ -9,7 +9,7 @@ open State
    component, I aimed to build tests that represent:
    1. Typical input
    2. Edge cases (circumstances that could occur in practice but are uncommon)
-   I do not test garbage input (ie. data that violates specifications).
+   I do not test "garbage" input (ie. data that violates specifications).
 
    Because OCAML is made up of many components, some of which strictly depend
    on user interaction, the following components are tested in this file:

@@ -28,26 +28,22 @@ let print_libinfo state =
   print_newline ()
 
 let print_artists state = 
-  lib_loaded state;
   ignore (state.library |> list_artists |> List.sort compare |>
           List.map (fun x -> x.name) |> 
           List.map (fun s -> ANSITerminal.(print_string [blue]
                                              ("- " ^ s ^ "\n"))))
 
 let print_albums state = 
-  lib_loaded state;
   ignore (state.library |> list_albums |> List.sort compare |> 
           List.map (fun x -> x.title) |>
           List.map (fun s -> ANSITerminal.(print_string [blue]
                                              ("- " ^ s ^ "\n"))))
 
 let print_tracks state = 
-  lib_loaded state;
   ignore (state.library |> list_tracks |> List.sort compare |> List.map
             (fun s -> ANSITerminal.(print_string [blue] ("- " ^ s ^ "\n"))))
 
 let rec print_all state artists =
-  lib_loaded state;
   match artists with 
   | [] -> ()
   | h::t -> 
@@ -77,19 +73,24 @@ let print_view state input =
   lib_loaded state;
   match input with 
   | [] -> ANSITerminal.(print_string [white;on_red] 
-                          "Usage: view <artist> <name>");
+                          "Usage: view <artist> [album]");
     print_newline ()
-  | h::"artist"::[] -> ANSITerminal.(print_string [white;on_red] 
-                                       "Usage: view <artist> <name>");
+  | _::[] -> ANSITerminal.(print_string [white;on_red] 
+                             "Usage: view <artist> [album]");
     print_newline ()
-  | h::"artist"::artist::_ ->
+  | _::artist::[] -> 
     let tracks x = ignore
         (List.map (fun y -> ANSITerminal.(print_string [cyan]
                                             ("\t - " ^ y ^ "\n"))) x.tracks) in
     ignore ((get_artist artist (state.library)).albums |> (List.map (fun x -> 
-        ANSITerminal.(print_string [blue] ("\t" ^ x.title ^ "\n");tracks x))))
-  | h::t -> ANSITerminal.(print_string [white;on_red] 
-                            "Usage: view <artist> <name>");
+        ANSITerminal.(print_string [blue] ("\t" ^ x.title ^ "\n");tracks x))));
+    print_newline ()
+  | _::artist::album::_ ->
+    let album = get_album artist album state.library in 
+    ANSITerminal.(print_string [blue] (album.title ^ "\n"));
+    ignore (List.map (fun title ->
+        ANSITerminal.(print_string [cyan] (" - " ^ title ^ "\n")))
+        album.tracks);
     print_newline ()
 
 let now_playing state = 
@@ -146,8 +147,7 @@ let stop state =
 
 let skip state = 
   begin match state.view_queue with 
-    | [] -> ();
-      print_newline (); stop state
+    | [] -> (); stop state
     | h::t -> skip_queue state; end;
   reload_liq state
 
@@ -156,29 +156,31 @@ let restart state = ANSITerminal.(print_string [white;on_red] "Restarting...");
   set_library (load_library ["load";"blank.json"]) state; clear_queue state
 
 let print_help () = 
-  ANSITerminal.(print_string [blue;Bold] "Available commands:";
-                print_endline "\n\thelp\t\t\t\t\t
-                Prints this page.";
-                print_endline "\tload <filename>\t\t\t\t
-                Loads a library from a OCAML-compatible JSON file.";
-                print_endline "\tlibinfo\t\t\t\t\t
-                Gives stats about the currently open library.";
-                print_endline "\tlist <all|artists|albums|tracks>\t
-                Lists the provided field.";
-                print_endline "\tview <artist> <name>\t\t\t
-                View details about the provided category and name.";
-                print_endline "\tnowplaying\t\t\t\t
-                Displays current track info.";
-                print_endline "\tplay <artist> [album] [track]\t\t
-                Plays desired media.";
-                print_endline "\tqueue\t\t\t\t\t
-                Displays track queue.";
-                print_endline "\tclear\t\t\t\t\t
-                Clears queue and current track.";
-                print_endline "\tskip\t\t\t\t\t
-                Skips current track.";
-                print_endline "\tstop\t\t\t\t\t
-                Stops playback.";
-                print_endline "\trestart\t\t\t\t\t
-                Restarts OCAML (unloads library).";
-                print_endline "\tquit\t\t\t\t\tQuit OCAML.")
+  ANSITerminal.
+    (print_string [blue;Bold] "Available commands:";
+     print_endline 
+       "\n\thelp\t\t\t\t\tPrints this page.";
+     print_endline 
+       "\tload <filename>\t\t\t\tLoads a library from a JSON file.";
+     print_endline
+       "\tlibinfo\t\t\t\t\tGives stats about the currently open library.";
+     print_endline
+       "\tlist <all|artists|albums|tracks>\tLists the provided field.";
+     print_endline
+       ("\tview <artist> [album]" ^
+        "\t\t\tView details about the provided category and name.");
+     print_endline
+       "\tnowplaying\t\t\t\tDisplays current track info.";
+     print_endline 
+       "\tplay <artist> [album] [track]\t\tPlays desired media.";
+     print_endline 
+       "\tqueue\t\t\t\t\tDisplays track queue.";
+     print_endline
+       "\tclear\t\t\t\t\tClears queue and current track.";
+     print_endline
+       "\tskip\t\t\t\t\tSkips current track.";
+     print_endline 
+       "\tstop\t\t\t\t\tStops playback.";
+     print_endline 
+       "\trestart\t\t\t\t\tRestarts OCAML (unloads library).";
+     print_endline "\tquit\t\t\t\t\tQuit OCAML.")
