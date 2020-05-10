@@ -33,6 +33,14 @@ let add_artist_to_queue artist state =
     ((Library.get_artist artist state.library).albums |>
      List.map (fun x -> x.title))
 
+let skip_queue state = 
+  match state.view_queue with 
+  | [] -> ()
+  | h::t -> state.view_queue <- t; 
+    (match state.path_queue with 
+     | [] -> ()
+     | h::t -> state.path_queue <- t)
+
 let clear_queue state = 
   state.view_queue <- []; state.path_queue <- []
 

@@ -145,16 +145,11 @@ let stop state =
   | _::_ -> stop_liq state
 
 let skip state = 
-  lib_loaded state;
-  match state.view_queue with 
-  | [] -> ANSITerminal.(print_string [white;on_red] "Queue is empty");
-    print_newline (); stop state
-  | h::[] -> state.view_queue <- []; state.path_queue <- []; reload_liq state
-  | h::t -> state.view_queue <- t; 
-    (match state.path_queue with 
-     | [] -> ()
-     | h::t -> state.path_queue <- t);
-    reload_liq state
+  begin match state.view_queue with 
+    | [] -> ();
+      print_newline (); stop state
+    | h::t -> skip_queue state; end;
+  reload_liq state
 
 let restart state = ANSITerminal.(print_string [white;on_red] "Restarting...");
   print_newline(); set_start true state;
