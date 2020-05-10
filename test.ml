@@ -25,10 +25,10 @@ open State
    - Modifying queues (view_queue, path_queue) [x]
 
    Mklibrary
-   - Reading library fields (artists/albums/tracks) from a directory [ ]
-   - Building a library object [ ]
+   - Reading library fields (artists/albums/tracks) from a directory [x]
+   - Building a library object [x]
 
-   Main
+   Control
    - Verify functionality of string chunking [ ]
    - Checking if file/dir exist on disk [ ]
 
@@ -37,7 +37,9 @@ open State
    module. Its functionality is grounded in printing, which would not be
    practically testable. I also do not test any functions that interact with
    Liquidsoap ([State.init_liq, State.stop_liq, State.reload_liq]) or the 
-   queue written to disk ([State.write_queue, State.wipe_queue]).
+   queue written to disk ([State.write_queue, State.wipe_queue]) [Main] 
+   contains nothing that would warrant testing, just a single call to 
+   [Control.run].
 *)
 
 (** [load_json filename] returns a JSON object loaded from [filename]. *)
@@ -159,6 +161,24 @@ let make_queue_test (name) (field) ?(artist="") ?(album="") ?(track="") (state)
   name >:: fun _ -> assert_equal state.view_queue view_queue;
     assert_equal state.path_queue path_queue
 
+(** [make_mklibrary_test name dir expected_output] builds an OUnit test case
+    named [name] to verify [Mklibrary.make_library dir] produces library object
+    passed in [expected_output]. *)
+let make_mklibrary_test (name) (dir) (expected_output) = 
+  name >:: fun _ -> assert_equal (Mklibrary.make_library dir) (expected_output)
+
+(** [make_chunks_test name str expected_output] builds an OUnit test case named
+    [name] to verify [Control.chunks str] produces [expected_output]. *)
+let make_chunks_test (name) (str) (expected_output) =
+  name >:: fun _ -> assert_equal (Control.chunks str) (expected_output)
+
+(** [make_check_file_test name file filename expected_output] builds an OUnit
+    test case named [name] to verify [Control.check_file file filename]
+     produces [expected_output]. *)
+let make_check_file_test (name) (file) (filename) (expected_output) =
+  name >:: fun _ -> assert_equal (Control.check_file file filename)
+      (expected_output)
+
 let library_tests = [ 
   make_load_artists_test "Two artists" (fst libraries)
     ["Pond";"Tekashi_6ix9ine"];
@@ -249,19 +269,44 @@ let state_tests = [
     (make_state ~library:(fst libraries)
        ~v_q:(["outside_is_the_right_side.mp3"; "waiting_around_for_grace.mp3";
               "30000_megatons.mp3";"the_weather.mp3"])
-       ~p_q:(["testlib/Pond/Man_It_Feels_Like_Space_Again/outside_is_the_right_side.mp3";
-              "testlib/Pond/Man_It_Feels_Like_Space_Again/waiting_around_for_grace.mp3";
-              "testlib/Pond/The_Weather/30000_megatons.mp3";
-              "testlib/Pond/The_Weather/the_weather.mp3"]) ())
+       ~p_q:([
+           "testlib/Pond/Man_It_Feels_Like_Space_Again/outside_is_the_right_side.mp3";
+           "testlib/Pond/Man_It_Feels_Like_Space_Again/waiting_around_for_grace.mp3";
+           "testlib/Pond/The_Weather/30000_megatons.mp3";
+           "testlib/Pond/The_Weather/the_weather.mp3"]) ())
     ["waiting_around_for_grace.mp3";"30000_megatons.mp3";"the_weather.mp3"; ]
     ["testlib/Pond/Man_It_Feels_Like_Space_Again/waiting_around_for_grace.mp3";
      "testlib/Pond/The_Weather/30000_megatons.mp3";
      "testlib/Pond/The_Weather/the_weather.mp3";]
 ]
 
+let mklibrary_tests = [
+  make_mklibrary_test "Empty library" "test_files/empty" 
+    {lib_name = "test_files/empty"; artists = []};
+  make_mklibrary_test "Nonempty library" "test_library" (snd libraries);
+  make_exn_test "Nonexisting library" (fun () -> Mklibrary.make_library "asdf")
+    (Mklibrary.NoDir "asdf")
+]
+
+let control_tests = [
+  make_chunks_test "Empty string" "" [];
+  make_chunks_test "One word" "blah" ["blah"];
+  make_chunks_test "One word; spaces" "    blah   " ["blah"];
+  make_chunks_test "Two words" "3110 OCAML" ["3110";"OCAML"];
+  make_chunks_test "Two words; spaces" "  3110    OCAML  " ["3110";"OCAML"];
+  make_check_file_test "Empty filename" true ["load"] false; 
+  make_check_file_test "Empty dirname" false ["loaddir"] false;
+  make_check_file_test "Valid filename" true ["load"; "file"] true;
+  make_check_file_test "Valid dirname" false ["loaddir"; "dir"] true;
+  make_exn_test "Malformed input; file" (fun () -> Control.check_file true [])
+    (Failure "Malformed input");
+  make_exn_test "Malformed input; dir" (fun () -> Control.check_file false [])
+    (Failure "Malformed input");
+]
+
 let suite =
   "OCAML test suite"  >::: List.flatten [
-    library_tests; state_tests
+    library_tests; state_tests; mklibrary_tests; control_tests
   ]
 
 let _ = run_test_tt_main suite
