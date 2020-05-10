@@ -21,7 +21,7 @@
   - Run OCAML with `make`.
   - With OCAML running, run `help` to see available instructions.
   - Need further assistance? `make docs` will generate interface documentation in HTML format.
-  - Note: file paths can be absolute (ie. `/home/user/music_library.json`) or relative to OCAML's root directory (ie `testlib.json`).
+  - **Note**: I have included a basic library of royalty-free music to test (`test_library`) as well as a simple JSON library (`testlib.json`).
 - ### `load`
   - Using OCAML with a JSON file was solely implemented as a proof-of-concept and will not work with audio playback, queueing, or any useful features. Use `loaddir` on a directory of music instead (see below). An example library with public-domain audio is included (test_library).
 - ### `loaddir`
@@ -40,7 +40,7 @@
         - track_5.ext
   (etc.)
   ```
-  - *Note*: File and folder names cannot contain spaces at this time.
+  - **Note**: File and folder names cannot contain spaces at this time.
   - Once this file structure is established, run `loaddir <lib_name>`
 ## Todo
 - Writing directory-read library to JSON file
@@ -50,4 +50,4 @@
 - Arjun Sweet, resident Griggologist
 - Micah, dog
 
-<sup>Note: the above acknowledgements are entirely a joke, this project was completed by myself, alone</sup>
+<sup>Note: the above acknowledgements are entirely a joke. This project was completed by myself, alone.</sup>
