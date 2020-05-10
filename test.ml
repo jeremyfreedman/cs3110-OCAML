@@ -29,8 +29,8 @@ open State
    - Building a library object [x]
 
    UI
-   - Loading libraries from JSON [ ]
-   - Loading libraries from directory [ ]
+   - Loading libraries from JSON [x]
+   - Loading libraries from directory [x]
 
    Control
    - Verify functionality of string chunking [x]
