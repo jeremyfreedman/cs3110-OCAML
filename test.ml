@@ -22,7 +22,7 @@ open State
 
    State
    - Updating various state fields (library, state, artist/album/track, etc) [x]
-   - Modifying queues (view_queue, path_queue) [ ]
+   - Modifying queues (view_queue, path_queue) [x]
 
    Mklibrary
    - Reading library fields (artists/albums/tracks) from a directory [ ]
@@ -238,7 +238,9 @@ let state_tests = [
     ["STOOPID.mp3";"30000_megatons.mp3"] 
     ["testlib/Tekashi_6ix9ine/DUMMY_BOI/STOOPID.mp3";
      "testlib/Pond/The_Weather/30000_megatons.mp3"];
-  make_queue_test "Clear queue" "clear"
+  make_queue_test "Clear queue; empty" "clear"
+    (make_state ~library:(fst libraries) ()) [] [];
+  make_queue_test "Clear queue; nonempty" "clear"
     (make_state ~library:(fst libraries) 
        ~v_q:(["30000_megatons.mp3"])
        ~p_q:(["testlib/Pond/The_Weather/30000_megatons.mp3"]) ()) [] [];
