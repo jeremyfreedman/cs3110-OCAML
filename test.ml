@@ -48,6 +48,15 @@ let libraries = (
   Mklibrary.make_library "test_library"
 )
 
+(** [make_state ?library ?start ?artist ?album ?track ?v_q ?p_q ?l_io unit]
+    streamlines the process of building various states for testing purposes. *)
+let make_state ?(library={lib_name = ""; artists = []}) ?(start=true) 
+    ?(artist="") ?(album="") ?(track="") ?(v_q=[]) ?(p_q=[]) 
+    ?(l_io=stdin,stdout) () =
+  {library = library; start = start; current_artist = artist; 
+   current_album = album; current_track = track; view_queue = v_q;
+   path_queue = p_q; liq_io = l_io}
+
 (** [text_exn name exn expected_exn] builds an OUnit test case named [name]
     to validate [fn] throws [expected_exn]. *)
 let make_exn_test (name) (fn) (expected_exn) =
@@ -117,7 +126,7 @@ let make_track_path_test (name) (lib) (artist) (album) (track)
   name >:: fun _ -> assert_equal (Library.get_track_path artist album track lib)
       (expected_output)
 
-(** [make_set_field_test name state field lib_value bool_value string_value
+(** [make_set_field_test name state field ?lib_value ?bool_value ?string_value
     new_state] builds an OUnit test case named [name] to verify [state].[field]
     has changed after modifying the given [field] with the relevant [__value]. *)
 let make_set_field_test (name) (field) ?(lib_value=(fst libraries))
@@ -135,15 +144,20 @@ let make_set_field_test (name) (field) ?(lib_value=(fst libraries))
     name >:: fun _ -> assert_equal state.current_track string_value
   | s -> failwith (s ^ " is not a valid state field.")
 
-let make_queue_test (name) (field) (artist) ?(album="") ?(track="") (state) =
-  match field with 
-  | "artist" -> State.add_artist_to_queue artist state;
-    name >:: fun _ -> assert_equal state.current_artist artist
-  | "album" -> State.add_album_to_queue artist album state; 
-    name >:: fun _ -> assert_equal state.current_album album
-  | "track" -> State.add_track_to_queue artist album track state; 
-    name >:: fun _ -> assert_equal state.current_track track
-  | s -> failwith (s ^ " is not a valid queue request.")
+(** [make_queue_test name field artist ?album ?track state] builds an OUnit test
+    case named [name] to verify [state.__queue] fields update when adding
+    [artist], [?album], and/or [?track]. *)
+let make_queue_test (name) (field) ?(artist="") ?(album="") ?(track="") (state)
+    (view_queue) (path_queue) =
+  begin match field with 
+    | "artist" -> State.add_artist_to_queue artist state
+    | "album" -> State.add_album_to_queue artist album state
+    | "track" -> State.add_track_to_queue artist album track state
+    | "clear" -> State.clear_queue state
+    | "skip" -> State.skip_queue state
+    | s -> failwith (s ^ " is not a valid queue instruction.") end;
+  name >:: fun _ -> assert_equal state.view_queue view_queue;
+    assert_equal state.path_queue path_queue
 
 let library_tests = [ 
   make_load_artists_test "Two artists" (fst libraries)
@@ -186,38 +200,61 @@ let library_tests = [
 
 let state_tests = [ 
   make_set_field_test "Set library" "library" ~lib_value:(snd libraries)
-    {library = {lib_name = ""; artists = []}; start = true; current_artist = ""; 
-     current_album = ""; current_track = ""; view_queue = []; path_queue = [];
-     liq_io = (stdin, stdout)};
+    (make_state ());
   make_set_field_test "Set start" "start" ~bool_value:(true) 
-    {library = {lib_name = ""; artists = []}; start = false; current_artist = ""; 
-     current_album = ""; current_track = ""; view_queue = []; path_queue = [];
-     liq_io = (stdin, stdout)};
+    (make_state ~start:(false) ());
   make_set_field_test "Set artist" "artist" ~string_value:("Pond") 
-    {library = {lib_name = ""; artists = []}; start = true;
-     current_artist = "Pond"; current_album = ""; current_track = ""; 
-     view_queue = []; path_queue = []; liq_io = (stdin, stdout)};
+    (make_state ~artist:("Pond") ());
   make_set_field_test "Set album" "album" ~string_value:("Piano") 
-    {library = {lib_name = ""; artists = []}; start = true;
-     current_artist = ""; current_album = "Piano"; current_track = ""; 
-     view_queue = []; path_queue = []; liq_io = (stdin, stdout)};
+    (make_state ~album:("Piano") ());
   make_set_field_test "Set track" "track" ~string_value:("sovereign.mp3") 
-    {library = {lib_name = ""; artists = []}; start = true;
-     current_artist = ""; current_album = ""; current_track = "sovereign.mp3"; 
-     view_queue = []; path_queue = []; liq_io = (stdin, stdout)};
-  make_queue_test "Add artist" "artist" "Pond"
-    {library = (fst libraries); start = true; current_artist = "Pond";
-     current_album = ""; current_track = ""; view_queue = []; path_queue = [];
-     liq_io = (stdin, stdout)};
-  make_queue_test "Add album" "album" "Pond" ~album:("The_Weather")
-    {library = (fst libraries); start = true; current_artist = "Pond"; 
-     current_album = "The_Weather"; current_track = ""; view_queue = []; 
-     path_queue = []; liq_io = (stdin, stdout)};
-  make_queue_test "Add track" "track" "Pond" ~album:("The_Weather")
+    (make_state ~track:("sovereign.mp3") ());
+  make_exn_test "Add nonexisting artist"
+    (fun () -> add_artist_to_queue "C418"
+        (make_state ~library:(fst libraries) ()))
+    (Library.UnknownArtist "C418");
+  make_queue_test "Add artist" "artist" ~artist:("Pond")
+    (make_state ~library:(fst libraries)())
+    ["outside_is_the_right_side.mp3"; "waiting_around_for_grace.mp3";
+     "30000_megatons.mp3";"the_weather.mp3"]
+    ["testlib/Pond/Man_It_Feels_Like_Space_Again/outside_is_the_right_side.mp3";
+     "testlib/Pond/Man_It_Feels_Like_Space_Again/waiting_around_for_grace.mp3";
+     "testlib/Pond/The_Weather/30000_megatons.mp3";
+     "testlib/Pond/The_Weather/the_weather.mp3"];
+  make_queue_test "Add album" "album" ~artist:("Pond") ~album:("The_Weather")
+    (make_state ~library:(fst libraries) ())
+    ["30000_megatons.mp3"; "the_weather.mp3"]
+    ["testlib/Pond/The_Weather/30000_megatons.mp3";
+     "testlib/Pond/The_Weather/the_weather.mp3"];
+  make_queue_test "Add track" "track" ~artist:("Pond") ~album:("The_Weather")
     ~track:("30000_megatons.mp3")
-    {library = (fst libraries); start = true; current_artist = "Pond";
-     current_album = "The_Weather"; current_track = "30000_megatons.mp3";
-     view_queue = []; path_queue = []; liq_io = (stdin, stdout)};
+    (make_state ~library:(fst libraries) ())
+    ["30000_megatons.mp3"] ["testlib/Pond/The_Weather/30000_megatons.mp3"];
+  make_queue_test "Stack tracks" "track" ~artist:("Tekashi_6ix9ine")
+    ~album:("DUMMY_BOI") ~track:("STOOPID.mp3")
+    (make_state ~library:(fst libraries) 
+       ~v_q:(["30000_megatons.mp3"])
+       ~p_q:(["testlib/Pond/The_Weather/30000_megatons.mp3"]) ())
+    ["STOOPID.mp3";"30000_megatons.mp3"] 
+    ["testlib/Tekashi_6ix9ine/DUMMY_BOI/STOOPID.mp3";
+     "testlib/Pond/The_Weather/30000_megatons.mp3"];
+  make_queue_test "Clear queue" "clear"
+    (make_state ~library:(fst libraries) 
+       ~v_q:(["30000_megatons.mp3"])
+       ~p_q:(["testlib/Pond/The_Weather/30000_megatons.mp3"]) ()) [] [];
+  make_queue_test "Skip track; empty" "skip" (make_state ()) [] [];
+  make_queue_test "Skip track; nonempty" "skip" 
+    (make_state ~library:(fst libraries)
+       ~v_q:(["outside_is_the_right_side.mp3"; "waiting_around_for_grace.mp3";
+              "30000_megatons.mp3";"the_weather.mp3"])
+       ~p_q:(["testlib/Pond/Man_It_Feels_Like_Space_Again/outside_is_the_right_side.mp3";
+              "testlib/Pond/Man_It_Feels_Like_Space_Again/waiting_around_for_grace.mp3";
+              "testlib/Pond/The_Weather/30000_megatons.mp3";
+              "testlib/Pond/The_Weather/the_weather.mp3"]) ())
+    ["waiting_around_for_grace.mp3";"30000_megatons.mp3";"the_weather.mp3"; ]
+    ["testlib/Pond/Man_It_Feels_Like_Space_Again/waiting_around_for_grace.mp3";
+     "testlib/Pond/The_Weather/30000_megatons.mp3";
+     "testlib/Pond/The_Weather/the_weather.mp3";]
 ]
 
 let suite =
