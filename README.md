@@ -12,8 +12,8 @@
 - ### Dependencies
   - Install the necessary dependencies using OPAM:
     1. `opam install depext`
-    2. `opam depext Yojson ANSITerminal mad liquidsoap`
-    3. `opam install Yojson ANSITerminal mad liquidsoap`
+    2. `opam depext mad pulseaudio liquidsoap`
+    3. `opam install Yojson ANSITerminal mad pulseaudio liquidsoap`
 - ### Compatibility
   - Audio playback uses Liquidsoap's `output.prefered`, which means it *should* be able to locate your audio driver independently. I've tested playback on a Dell XPS 15 9570 running Ubuntu 20.04 with Pulseaudio. I have not had success getting audio playback on Windows (WSL), so your milage may vary.
   - I would presume audio playback does not work on macOS, but I have no way to test this. It depends on OCaml's `Unix` library which probably has compatibility issues with macOS.
