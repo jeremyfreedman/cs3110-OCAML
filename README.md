@@ -46,7 +46,6 @@
 - Writing directory-read library to JSON file
 - Sorting library by audio metadata/tags
 ## Acknowledgements
-- Megan Rait, QA engineer
 - Arjun Sweet, resident Griggologist
 - Micah, dog
 
